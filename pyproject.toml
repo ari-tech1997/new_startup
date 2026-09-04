@@ -1,0 +1,28 @@
+[project]
+name = "new_startup"
+version = "0.1.0"
+description = "new_startup using crewAI"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "crewai-tools[mcp]>=1.15.19",
+    "crewai[tools]>=1.15.18,<2.0.0",
+    "yfinance>=1.7.0",
+]
+
+[project.scripts]
+new_startup = "new_startup.main:run"
+run_crew = "new_startup.main:run"
+train = "new_startup.main:train"
+replay = "new_startup.main:replay"
+test = "new_startup.main:test"
+run_with_trigger = "new_startup.main:run_with_trigger"
+stock-mcp-server = "new_startup.mcp_server.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.crewai]
+type = "crew"
+project_id = "4b174f31-7950-4864-9a10-d6a997bb78e4"

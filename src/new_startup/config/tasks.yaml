@@ -1,0 +1,75 @@
+research_task:
+  description: >
+    Research {company} (ticker: {ticker}) and build the factual foundation the rest of the
+    analysis will rely on. If the ticker is uncertain, use the search_symbols tool to confirm
+    it before proceeding. Investigate and report on:
+      - company identity (confirmed name, ticker, exchange)
+      - business model (what it sells, to whom, how it earns revenue)
+      - products/services
+      - industry/sector
+      - any relevant recent developments or business context you can genuinely support
+      - context useful for the technical and sector analysis that follows (e.g. what kind of
+        company this is - growth vs. mature, its general market position)
+    Follow the disciplined research methodology in your skill: prioritize reliable information,
+    clearly separate verified facts from inference, and never invent details you don't actually
+    have.
+  expected_output: >
+    A structured company research brief with clearly labeled sections (company identity,
+    business model, products/services, industry/sector, relevant context) containing factual
+    findings, with a note on what data/tools backed each finding.
+  agent: research_agent
+
+technical_task:
+  description: >
+    Perform a technical analysis of {ticker} using the get_quote and get_indicators tools.
+    Retrieve the current/recent quote and the available technical indicators (moving averages,
+    RSI, MACD), then interpret what they indicate about trend and momentum. Use the company
+    research as context where it helps (e.g. what kind of company this is), but do not redo the
+    research yourself. Follow the technical analysis methodology in your skill: never let a
+    single indicator "prove" a conclusion, note where indicators agree or disagree, and report
+    the actual values you used.
+  expected_output: >
+    A structured technical analysis containing the actual retrieved quote and indicator values
+    (price, change, SMA20, SMA50, RSI14, MACD/signal/histogram) plus a concise interpretation of
+    trend and momentum grounded in those values.
+  agent: technical_agent
+  context:
+    - research_task
+
+sector_task:
+  description: >
+    Identify 3-5 sector peers for {company} ({ticker}) and compare it against them across
+    multiple meaningful dimensions (price trend, momentum, scale, and any relevant qualitative
+    differences). Use the company research and technical analysis you were given as context -
+    they tell you the industry/business model and the target's current technical behavior - do
+    not redo that work yourself. Use search_symbols, get_quote, and get_indicators to gather
+    comparable data on each peer. Follow the sector comparison methodology in your skill: choose
+    peers with a real rationale, distinguish raw data from interpretation, and state limitations
+    when peer comparability is imperfect.
+  expected_output: >
+    A detailed sector comparison report including: the identified peers, the rationale for each
+    peer's selection, the comparison data gathered for target and peers, relative strengths/
+    weaknesses, and a clear statement of the target's positioning within its sector.
+  agent: sector_agent
+  context:
+    - research_task
+    - technical_task
+
+report_task:
+  description: >
+    Write the final investment analysis report for {company} ({ticker}) by synthesizing the
+    company research, technical analysis, and sector comparison you were given as context. Do
+    not redo any of that prior work - integrate it. Follow the report-writing methodology in
+    your skill: organize the report into clear sections, distinguish facts/analysis/conclusions,
+    never invent missing data, and carry forward any uncertainty or limitations the earlier
+    stages flagged.
+  expected_output: >
+    A clear final stock analysis report in markdown with logical sections (executive summary,
+    company overview, technical analysis, sector positioning, conclusion) and concise,
+    evidence-based conclusions.
+  agent: report_agent
+  context:
+    - research_task
+    - technical_task
+    - sector_task
+  output_file: report.md
