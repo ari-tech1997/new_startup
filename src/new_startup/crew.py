@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 from crewai import Agent, Crew, Process, Task
@@ -33,10 +34,18 @@ class NewStartup():
     # MCP server providing search_symbols/get_quote/get_indicators, launched
     # as a subprocess over stdio. `self.get_mcp_tools(...)` (from @CrewBase)
     # starts it on first use and filters its tools by name per agent.
+    #
+    # Launched via `sys.executable -m ...` (the same interpreter already
+    # running this crew) rather than `uv run ...`: a deployed container may
+    # not have the `uv` CLI on PATH, and even when it does, `uv run` first
+    # re-validates/syncs the project against pyproject.toml/uv.lock (which
+    # can hang or fail without network access) and assumes a specific
+    # working directory. Invoking the module directly has neither
+    # dependency - it only requires `new_startup` to be importable, which
+    # it already must be for this crew to be running at all.
     mcp_server_params = StdioServerParameters(
-        command="uv",
-        args=["run", "stock-mcp-server"],
-        cwd=str(PROJECT_ROOT),
+        command=sys.executable,
+        args=["-m", "new_startup.mcp_server.server"],
     )
 
     @agent
